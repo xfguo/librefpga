@@ -1,10 +1,8 @@
 language: scala
 
-sbt_args: -no-colors
-
 script:
-  - sbt compile
-  - sbt test
+  - sbt -no-colors compile
+  - sbt -no-colors test
 
 addons:
   apt:

@@ -8,30 +8,11 @@ import librefpga.LUT4
 import chisel3._
 
 class LUT4UnitTester(c: LUT4) extends PeekPokeTester(c) {
-  /**
-    * compute the lut4 and the number of steps it should take to do it
-    *
-    * @param a positive integer
-    * @param b positive integer
-    * @return the LUT4 of a and b
-    */
-  def computeGcd(a: Int, b: Int): (Int, Int) = {
-    var x = a
-    var y = b
-    var depth = 1
-    while(y > 0 ) {
-      if (x > y) {
-        x -= y
-      }
-      else {
-        y -= x
-      }
-      depth += 1
-    }
-    (x, depth)
-  }
-
   private val lut4 = c
+
+  poke(lut4.io.cfg_sen, 0)
+
+  step(1)
 
   /* test default outputs (0) */
   expect(lut4.io.out, 0)
