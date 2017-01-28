@@ -5,3 +5,8 @@ sbt_args: -no-colors
 script:
   - sbt compile
   - sbt test
+
+addons:
+  apt:
+    packages:
+    - verilator
