@@ -1,0 +1,7 @@
+language: scala
+
+sbt_args: -no-colors
+
+script:
+  - sbt compile
+  - sbt test
