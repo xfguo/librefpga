@@ -1,0 +1,7 @@
+- LUT: look-up Table
+- LE: logic Element
+- PLB: programmable logic block
+- LCB: local connection block
+- CB: connection block
+- SB: switch box/block
+- LB: logic block
