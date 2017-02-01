@@ -20,15 +20,15 @@ class CarryIo extends Bundle {
   val out = Output(UInt(1.W))
 }
 
-class LCIo extends Bundle {
+class LogicCellIo extends Bundle {
   val logic = new LogicIo
   val carry = new CarryIo
   val cfg = new ConfigIo
 }
 
-class LC extends Module {
+class LogicCell extends Module {
   val lutx = 4
-  val io = IO(new LCIo)
+  val io = IO(new LogicCellIo)
 
   val dff = Reg(init = 0.U(1.W))
 
