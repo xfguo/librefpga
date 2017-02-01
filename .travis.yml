@@ -1,8 +1,8 @@
 language: scala
 
 script:
-  - sbt -no-colors compile
-  - sbt -no-colors test
+  - sbt -no-colors -J-Xmx2G -J-Xss8M -J-XX:MaxPermSize=256M compile
+  - sbt -no-colors -J-Xmx2G -J-Xss8M -J-XX:MaxPermSize=256M test
 
 addons:
   apt:
