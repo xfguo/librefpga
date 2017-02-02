@@ -14,6 +14,11 @@ class PLBIo extends Bundle {
   val cfg = new ConfigIo()
 }
 
+/*
+ * bitstream foramt:
+ * 
+ * | LUTn config(n - 1) | LUTn config(n - 2) | ... | LUTn config(1) | LUTn config(0) |
+ */
 class PLB extends Module {
   val lutx = 4
   val n = 8
@@ -45,7 +50,7 @@ class PLB extends Module {
   /* config chain */
   LCs(max).cfg.sin := io.cfg.sin
   for (i <- 1 to max) {
-    LCs(i).cfg.sin := LCs(i - 1).cfg.sout
+    LCs(i - 1).cfg.sin := LCs(i).cfg.sout
   }
   io.cfg.sout := LCs(0).cfg.sout
   
