@@ -16,14 +16,7 @@ class MuxMtoN(m: Int, n:Int) extends Module {
     val outs = Vec(n, Output(UInt(1.W)))
   })
 
-  val vec = (0 to m - 1).map(x => UInt(x, w))
-
-  for (i <- 0 to n - 1) {
-    io.outs(i) := MuxLookup(
-      io.sels(i),
-      UInt(0),
-      vec zip vec.map(i => io.ins(i))
-    )
-  }
+  (io.outs zip io.sels).foreach{ case (o, s) => o := io.ins(s) }
 }
+
 
