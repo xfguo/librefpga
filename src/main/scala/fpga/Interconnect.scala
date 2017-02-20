@@ -25,8 +25,8 @@ class InterconnectIo extends Bundle {
 class Interconnect extends Module {
   val lutx = 4 /* input number of LUT */
   val le_num = 8 /* number of logic elements in PLB */
-  var carry_in_num = 1 /* carry out from PLB */
-  var carry_out_num = 1 /* carry out from PLB */
+  val carry_in_num = 1 /* carry in from PLB */
+  val carry_out_num = 1 /* carry out from PLB */
   
   val in_sel_width = UInt(2 * 4 - 1 + carry_in_num).getWidth /* bits of number mux select number (with carry in) */
 
@@ -44,7 +44,7 @@ class Interconnect extends Module {
   in_mux.io.ins := io.ins
 
   for (i <- 0 to le_num - 1) {
-    io.plbio.logics(i).in := Cat( (0 to lutx - 1).map(x => in_mux.io.outs( x + i * lutx ) ) )
+    io.plbio.logics(i).in := Cat( (0 to lutx - 1).map(x => in_mux.io.outs( x + i * lutx ) ).reverse )
   }
 
   io.plbio.carry.in := in_mux.io.outs(le_num * lutx)
