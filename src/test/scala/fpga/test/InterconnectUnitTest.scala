@@ -18,7 +18,7 @@ class InterconnectUnitTester(c: Interconnect) extends PeekPokeTester(c) {
   val carry_in_num = 1 /* carry in from PLB */
   val carry_out_num = 1 /* carry out from PLB */
   
-  val in_sel_width = UInt(2 * 4 - 1 + carry_in_num).getWidth /* bits of number mux select number (with carry in) */
+  val in_sel_width = UInt(2 * 4 - 1).getWidth /* bits of number mux select number (with carry in) */
 
   val out_num = 4 /* output wires number */
   val out_sel_width = UInt(le_num - 1 + carry_out_num).getWidth /* bits of output mux select number (with carry out) */
@@ -26,7 +26,7 @@ class InterconnectUnitTester(c: Interconnect) extends PeekPokeTester(c) {
   val rnd_gen = new Random()
   
 
-  for (n <- 0 to 0) {
+  for (n <- 0 to 10) {
     val in_sel_pat = Array.fill(le_num * lutx + carry_in_num) { rnd_gen.nextInt(2 * 4) }
     val out_sel_pat = Array.fill(out_num) { rnd_gen.nextInt(le_num + carry_out_num) }
 
@@ -45,9 +45,14 @@ class InterconnectUnitTester(c: Interconnect) extends PeekPokeTester(c) {
     }
     
     /* in sel */
-    for (i <- 0 to le_num * lutx - 1) {
+    for (i <- 0 to le_num * lutx + carry_in_num - 1) {
       val x = in_sel_pat(i)
-      println(f" in sel[$i] = $x%d")
+      if (i != le_num * lutx + carry_in_num - 1) {
+        println(f" in sel[$i] = $x%d")
+      } else {
+        println(f" carry sel  = $x%d")
+      }
+
       for (j <- 0 to in_sel_width - 1) {
         poke(ic.io.cfg.sen, true)
         poke(ic.io.cfg.sin, (in_sel_pat(i) >> j) & 1)
@@ -56,19 +61,20 @@ class InterconnectUnitTester(c: Interconnect) extends PeekPokeTester(c) {
     }
 
     poke(ic.io.cfg.sen, false)
-    step(1)
+    
+    step(3)
 
-    step(1)
-    step(1)
-    for (m <- 0 to 0) {
+    for (m <- 0 to 10) {
       /* test input and verify output for a given pattern */
       val ins_pat = Array.fill(2 * 4) { rnd_gen.nextInt(2) }
       val plb_io_logics_n_carry_out_pat = Array.fill(le_num + carry_out_num) { rnd_gen.nextInt(2) }
 
+      println("  ---------------------")
+
       /* logic output from PLB */
       for (i <- 0 to le_num - 1) {
         val x = plb_io_logics_n_carry_out_pat(i)
-        println(f" out [$i] = $x%d")
+        println(f"  out [$i] = $x%d")
         poke(ic.io.plbio.logics(i).out, plb_io_logics_n_carry_out_pat(i))
       }
 
@@ -76,7 +82,7 @@ class InterconnectUnitTester(c: Interconnect) extends PeekPokeTester(c) {
 
       {
         val x = plb_io_logics_n_carry_out_pat(le_num)
-        println(f" carry out = $x%d")
+        println(f"  carry out = $x%d")
       }
 
       /* input from outside */
@@ -101,16 +107,21 @@ class InterconnectUnitTester(c: Interconnect) extends PeekPokeTester(c) {
         for (j <- 0 to lutx - 1) {
           exp = exp | (ins_pat(in_sel_pat(j + i * lutx)) << j)
           val x = (ins_pat(in_sel_pat(j + i * lutx)))
-          println(f"test exp [$i][$j] = $x%d")
+          println(f"  test in exp [$i][$j] = $x%d")
         }
         expect(ic.io.plbio.logics(i).in, exp)
       }
 
-      //expect(ic.io.plbio.carry.in, ins_pat(in_sel_pat(le_num * lutx + carry_in_num - 1)))
+      expect(ic.io.plbio.carry.in, ins_pat(in_sel_pat(le_num * lutx + carry_in_num - 1)))
+
+      {
+        val x = ins_pat(in_sel_pat(le_num * lutx + carry_in_num - 1))
+        println(f"  test carry in exp = $x%d")
+      }
 
     }
-    step(1)
-    step(1)
+
+    step(2)
   }
 
 }

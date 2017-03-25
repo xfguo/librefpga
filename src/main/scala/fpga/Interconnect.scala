@@ -28,7 +28,7 @@ class Interconnect extends Module {
   val carry_in_num = 1 /* carry in from PLB */
   val carry_out_num = 1 /* carry out from PLB */
   
-  val in_sel_width = UInt(2 * 4 - 1 + carry_in_num).getWidth /* bits of number mux select number (with carry in) */
+  val in_sel_width = UInt(2 * 4 - 1).getWidth /* bits of number mux select number (with carry in) */
 
   val out_num = 4 /* output wires number */
   val out_sel_width = UInt(le_num - 1 + carry_out_num).getWidth /* bits of output mux select number (with carry out) */
@@ -36,7 +36,7 @@ class Interconnect extends Module {
   val io = IO(new InterconnectIo)
 
   val out_sel_sreg = Reg(UInt((out_num * out_sel_width).W)) /* lut out & carry out sels */
-  val in_sel_sreg = Reg(UInt((le_num * lutx * in_sel_width).W)) /* lut in & carry in sels */
+  val in_sel_sreg = Reg(UInt(((le_num * lutx + 1) * in_sel_width).W)) /* lut in & carry in sels */
 
   /* input mux: io port => PLB in (lut and carry) */
   val in_mux = Module(new MuxMtoN(2 * 4, le_num * lutx + carry_in_num))
@@ -49,7 +49,7 @@ class Interconnect extends Module {
 
   io.plbio.carry.in := in_mux.io.outs(le_num * lutx)
   
-  for (i <- 0 to le_num * lutx - 1) {
+  for (i <- 0 to le_num * lutx + carry_in_num - 1) {
     in_mux.io.sels(i) := in_sel_sreg((i + 1) * in_sel_width - 1, i * in_sel_width)
   }
   
@@ -72,7 +72,7 @@ class Interconnect extends Module {
   io.cfg.sout := out_sel_sreg(0)
 
   when(io.cfg.sen) {
-    in_sel_sreg := Cat(io.cfg.sin, in_sel_sreg((le_num * lutx * in_sel_width) - 1, 1))
+    in_sel_sreg := Cat(io.cfg.sin, in_sel_sreg(((le_num * lutx + carry_in_num) * in_sel_width) - 1, 1))
     out_sel_sreg := Cat(in_sel_sreg(0), out_sel_sreg((out_num * out_sel_width) - 1, 1))
   }
 }
