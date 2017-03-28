@@ -2,7 +2,7 @@ language: scala
 
 script:
   - sbt -no-colors -J-Xmx2G -J-Xss8M -J-XX:MaxPermSize=256M compile
-  - sbt -no-colors -J-Xmx2G -J-Xss8M -J-XX:MaxPermSize=256M test
+  - sbt -no-colors -J-Xmx2G -J-Xss8M -J-XX:MaxPermSize=256M "testOnly librefpga.test.InterconnectTester"
 
 addons:
   apt:
