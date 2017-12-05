@@ -1,9 +1,9 @@
 // See LICENSE for license details.
 
-package librefpga.test
+package librefpga
 
-import Chisel.iotesters.{ChiselFlatSpec, Driver, PeekPokeTester}
-import librefpga.LUTn
+import chisel3.iotesters
+import chisel3.iotesters.{ChiselFlatSpec, Driver, PeekPokeTester}
 
 import chisel3._
 

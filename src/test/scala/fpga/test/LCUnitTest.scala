@@ -1,10 +1,9 @@
 // See LICENSE for license details.
 
-package librefpga.test
+package librefpga
 
-import Chisel.iotesters.{ChiselFlatSpec, Driver, PeekPokeTester}
-import librefpga.LogicCell
-
+import chisel3.iotesters
+import chisel3.iotesters.{ChiselFlatSpec, Driver, PeekPokeTester}
 import chisel3._
 
 class LogicCellUnitTester(c: LogicCell) extends PeekPokeTester(c) {
